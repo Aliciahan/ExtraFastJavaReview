@@ -34,7 +34,7 @@ public class ErrorDef{
 We can simply say that the **static** object occupies only one place in the memory. 
 
 
-### When we define it? 
+##2.1.2 When we define it? 
 * Where we  define an object
 * 构造器
 * 非静态初始模块
@@ -183,3 +183,134 @@ MBP-de-XICUN:002ObjectAndMemory xicunhan$ java PriceTest
 ~~~
 
 我们可以看出, 在初始化的时候, 仅仅分配了空间+默认值, 并没有被赋值, 只有实例化之后, 才有数值出现. 
+
+##2.2 Parents
+
+继承extends的时候, 这个执行顺序:
+
+~~~java
+MBP-de-XICUN:002ObjectAndMemory xicunhan$ javac InitTest2.java 
+MBP-de-XICUN:002ObjectAndMemory xicunhan$ java InitTest2
+Creature non static block
+Creature non parms constructor
+Creature with name parms constructor
+Animal non static block
+Anaimal with one param constructor灰太狼
+Animal with twos params constructor3
+Wolf non static block
+Wolf non param
+wolf with weight5.6
+~~~
+
+---
+* Question: can a parent class gain access to its children?
+
+TestParentChildren.java
+
+~~~java
+class Base{
+    private int i =2;
+    public Base(){
+        this.display();
+    }
+    public void display(){
+        System.out.println("the value of i is: "+i);
+    }
+}
+
+class Derived extends Base{
+    private int i =22;
+    public Derived(){
+        i=222; // Step 1:
+    }
+    public void display(){
+
+        System.out.println("the value of i is: "+i);
+    }
+}
+
+public class TestParentChildren {
+    public static void main(String[] args){
+        new Derived();
+    }
+}
+~~~
+
+we will see that <mark>**the result is : 0**</mark>
+
+~~~java
+MBP-de-XICUN:002ObjectAndMemory xicunhan$ java TestParentChildren
+the value of i is: 0
+~~~
+
+Why? 
+
+- First in the Step 1 Initialize two i one for Base, the other for Derived, the default value are all 0 !
+- Then, before running the constructor of Derived it will run the constructor of Base, the i in base =2
+- but the "this" in it belongs to which class? this.i = 2, but this.display() uses the fonction of Class Derived!!!!
+
+the value of i depends on who declare it! But when we use the fonction, we consider like the problem does not exist. 
+
+To show this we rewrite Base
+
+~~~java
+class Base{
+    private int i =2;
+    public Base(){
+        System.out.println("The i of This is: "+this.i);
+        this.display();
+        System.out.println(this.getClass());
+    }
+~~~
+
+we got 
+
+~~~java 
+MBP-de-XICUN:002ObjectAndMemory xicunhan$ java TestParentChildren
+The i of This is: 2
+the value of i is: 0
+class Derived
+~~~
+
+####In which case we get access to the fonction rewritten by a child?
+
+~~~java
+class Animal{
+    private String desc;
+    public Animal(){
+        this.desc= getDesc();// Pay attention here
+    }
+    public String getDesc(){
+        return "Animal";
+    }
+    public String toString(){
+        return desc;
+    }
+}
+public class Wolf extends Animal{
+    private String name;
+    private double weight;
+    public Wolf(String name,double  weight){
+        this.name=name; // 3
+        this.weight = weight;
+    }
+
+    @Override
+    public String getDesc() {
+        return "Wolf[name:"+name+",weight:"+weight+"]";
+    }
+    public static void main(String [] args){
+        System.out.println(new Wolf("灰太狼",34.3)); //1
+    }
+}
+~~~
+ 
+the miracle is : 
+
+~~~java
+MBP-de-XICUN:002ObjectAndMemory xicunhan$ java Wolf
+Wolf[name:null,weight:0.0]
+~~~
+
+<mark>一定要注意在主类里面不要引用被子类重写的方法!!!</mark>
+
