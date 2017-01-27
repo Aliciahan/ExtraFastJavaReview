@@ -314,3 +314,59 @@ Wolf[name:null,weight:0.0]
 
 <mark>一定要注意在主类里面不要引用被子类重写的方法!!!</mark>
 
+## 2.3 Memory Control (Parent and Child)
+Look at an example first: 
+
+~~~java
+
+class Base{
+    int count =2;
+    public void display(){
+        System.out.println("the method in Base display called this.count:"+this.count);
+    }
+}
+
+class Derived extends  Base{
+    int count = 20;
+
+    @Override
+    public void display() {
+        System.out.println(this.count);
+    }
+}
+
+public class FieldAndMethodTest{
+    public static void main(String [] args) {
+        Base b = new Base();
+        System.out.println(b.count); // b.count =2
+        b.display();; // b count = 2
+        System.out.println("---------d------------");
+
+        Derived d = new Derived();
+        System.out.println(d.count);//d.count = 20
+        d.display();//20
+
+        System.out.println("---------bd------------");
+
+        Base bd = new Derived();
+        System.out.println(bd.count); //2 <-initialized by Base
+        bd.display(); // this point to the counter of Derived
+
+        System.out.println("---------d2b------------");
+        Base d2b = d; 
+        System.out.println(d2b.count);//2
+    }
+}
+~~~
+
+Whether this is a d, db, or d2b when they point at an Object Derived, and when we use the fonction display(), they will always show us the result of their **REAL TYPE**, but when we show the elements in them, they show us the result of **Declaration Type**.
+
+
+
+
+
+
+
+
+
+
