@@ -361,9 +361,148 @@ public class FieldAndMethodTest{
 
 Whether this is a d, db, or d2b when they point at an Object Derived, and when we use the fonction display(), they will always show us the result of their **REAL TYPE**, but when we show the elements in them, they show us the result of **Declaration Type**.
 
+<mark>Why</mark>
+
+~~~java
+class Animal{
+    public String name;
+    public void info(){
+        System.out.println(name);
+    }
+}
+
+public class AnimalTest extends Animal{
+    private double weight;
+}
+~~~
+
+look at the compilation : 
+
+~~~bash
+
+MacBook-Pro-de-XICUN:002ObjectAndMemory xicunhan$ javap -c -private AnimalTest
+Compiled from "AnimalTest.java"
+public class AnimalTest extends Animal {
+  private double weight;
+
+  public AnimalTest();
+    Code:
+       0: aload_0
+       1: invokespecial #1// Method Animal."<init>":()V
+       4: return
+
+  public void info();
+    Code:
+       0: aload_0
+       1: invokespecial #2// Method Animal.info:()V
+       4: return
+}
+~~~
+
+We find that
+
+- the weight is not initialised.
+- get the function info() directly from Anminal
+
+So that:
+ 
+- the name is still existe in the class Animal(will not be copied to the New extended class): Makes it possible to get two class have the variable the same nom. 
+- if Override the function in the extended class, it is impossible to copy the function from his parent. 
+
+<mark> What happens to the variables the same nom</mark>
+
+~~~java
+class Base{
+    int count=2;
+}
+class Mid extends Base{
+    int count =20;
+}
+public class Sub extends Mid{
+    int count=200;
+    public void accessMid(){
+        System.out.println(super.count);
+    }
+    public static void main(String[] args){
+        Sub s= new Sub();
+        Mid s2m= s;
+        Base s2b = s;
+
+        System.out.println(s.count);//200
+        System.out.println(s2m.count);//20
+        System.out.println(s2b.count);//2
+        s.accessMid();//donc 20
+    }
+}
+~~~
+
+#### How to use super()
+
+~~~java
+class Fruit{
+    String color = "not defined color";
+    public Fruit getThis(){
+        return this;
+    }
+    public void info(){
+        System.out.println("The function in Fruit");
+    }
+}
+
+public class Apple extends Fruit{
+    @Override
+    public void info() {
+        System.out.println("The function in Apple");
+    }
+
+    public void AccessSuperInfo(){
+        super.info();
+    }
+    public Fruit getSuper(){
+        return super.getThis();
+    }
+    String color = "Red";
+
+    public static void main(String [] args){
+        Apple a= new Apple();
+        Fruit f=a.getSuper();
+        System.out.println("a and f are the same?:"+(a==f));//Yes
+        System.out.println("accessing the color in a"+a.color);//Red
+        System.out.println("Accessing the color in f"+f.color);//not defined
+        a.info();//function in Apple
+        f.info();//function in Apple
+        a.AccessSuperInfo();//function in Fruit. 
+    }
+}
+~~~
+
+We constate that, the variable defined right. 
+but the info() is still the info in a. 
+
+- function in Extended class cannot return super.
+- the programme doesn't allow using the super as a variable. 
 
 
+~~~java
 
+class Parent
+{
+    public String tag = "Tag in Public Class";
+}
+
+class Derived extends Parent{
+    public String tag = "Private Tag in Derived class";
+}
+
+public class HideTest{
+    public static void main(String [] args){
+        Derived d= new Derived();
+        System.out.println(d.tag);//Private Tag
+        System.out.println(((Parent)d).tag);//Public Tag
+
+    }
+}
+~~~
 
 
 
