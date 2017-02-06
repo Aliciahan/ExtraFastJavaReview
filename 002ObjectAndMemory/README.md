@@ -505,6 +505,41 @@ public class HideTest{
 ~~~
 
 
+## Final 修饰符
+
+- 可以修饰variable, 不能重新赋值
+- 可以修饰function, can not override
+- 可以修饰Class, cannot extend.
+
+
+---
+
+### Final and Variables
+
+- 实例变量 指定初始值
+- 非晶态初始化块中 指定初始值
+- 构造其中 为 final实例变量 指定初始值. 
+
+Voir **FinalInstanceVariableTest.java**
+
+### Final Class Variable
+
+- 定义时赋值
+- static initial bloc 赋值
+
+Example : FinalClassVariableTest.java
+
+---
+
+由上面两个看出, final变量必须被显式的赋值. 
+
+###Remark:
+
+- 如果在定义时赋值: 在编译时就直接确定下来了.
+- 这种东西, 系统会把它当做 "**Macro Variable**"
+- 执行的时候直接把变量替换成指定数值.
+
+
 
 
 
